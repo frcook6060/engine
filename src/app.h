@@ -1,6 +1,8 @@
 #pragma once
 
 
+#define G_TIME 1.0f / 60.0f
+
 #define WIN_WS_TYPE WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX
 
 
@@ -10,7 +12,7 @@ public:
 
 	virtual void init() = 0;
 
-	virtual void update(float delta) = 0;
+	virtual void update() = 0;
 
 	virtual void fixedUpdate() = 0;
 
@@ -19,6 +21,15 @@ public:
 	virtual void release() = 0;
 };
 
+struct AppTimer
+{
+	LARGE_INTEGER clockFreq;
+	LARGE_INTEGER startTime;
+	LARGE_INTEGER endTimer;
+
+	float delta = 0.0f;
+	float fixedDelta = 0.0f;
+};
 
 struct AppConfig
 {
@@ -35,6 +46,8 @@ struct AppConfig
 	HWND hwnd;
 	MSG msg;
 	bool isRunning = true; // Default to true
+
+	AppTimer timer;
 };
 
 void app_init(AppConfig* config);

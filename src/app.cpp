@@ -52,6 +52,9 @@ void app_init(AppConfig* config)
 	ShowWindow(g_config->hwnd, g_config->cmdShow);
 	UpdateWindow(g_config->hwnd);
 
+	// Handle Timer
+	QueryPerformanceFrequency(&g_config->timer.clockFreq);
+
 
 	if (g_config->app)
 	{
@@ -62,8 +65,22 @@ void app_init(AppConfig* config)
 void app_update()
 {
 
+	QueryPerformanceCounter(&g_config->timer.startTime);
+
 	while (g_config->isRunning)
 	{
+		QueryPerformanceCounter(&g_config->timer.endTimer);
+		
+		LARGE_INTEGER delta;
+
+		delta.QuadPart = g_config->timer.endTimer.QuadPart - g_config->timer.startTime.QuadPart;
+
+		g_config->timer.delta = ((float)delta.QuadPart) / ((float)g_config->timer.clockFreq.QuadPart);
+
+		g_config->timer.startTime.QuadPart = g_config->timer.endTimer.QuadPart;
+
+		g_config->timer.fixedDelta += g_config->timer.delta;
+
 		while (PeekMessage(&g_config->msg, nullptr, 0, 0, PM_REMOVE))
 		{
 			TranslateMessage(&g_config->msg);
@@ -73,9 +90,20 @@ void app_update()
 
 		if (g_config->app)
 		{
-			g_config->app->update(1.0f);
-			g_config->app->fixedUpdate();
+			g_config->app->update();
+
+			if (g_config->timer.fixedDelta >= G_TIME)
+			{
+				g_config->app->fixedUpdate();
+			}
+
 			g_config->app->render();
+		}
+
+
+		if (g_config->timer.fixedDelta >= G_TIME)
+		{
+			g_config->timer.fixedDelta = 0.0f;
 		}
 	}
 }

@@ -3,21 +3,27 @@
 
 class AppTest : public IApp
 {
+private:
 public:
 	virtual void init() 
-	{}
+	{
+	}
 
-	virtual void update(float delta)
-	{}
+	virtual void update()
+	{
+	}
 
 	virtual void fixedUpdate()
-	{}
+	{
+	}
 
 	virtual void render()
-	{}
+	{
+	}
 
 	virtual void release()
-	{}
+	{
+	}
 };
 
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPreInst, LPSTR lpCmdLine, int nCmdShow)
