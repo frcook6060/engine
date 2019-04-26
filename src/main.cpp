@@ -1,121 +1,38 @@
-#include <iostream>
-#include <string>
+#include "sys.h"
 
-#include <Windows.h>
 
-#define WIN_WS_TYPE WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX
+class AppTest : public IApp
+{
+public:
+	virtual void init() 
+	{}
 
-static std::string winClass = "_engine_window";
-static std::string caption = "Engine Window";
-static int width = 1280;
-static int height = 720;
-static bool isRunning = true;
+	virtual void update(float delta)
+	{}
 
-LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
+	virtual void fixedUpdate()
+	{}
 
-void game_init();
-void game_update();
-void game_render();
-void game_release();
+	virtual void render()
+	{}
+
+	virtual void release()
+	{}
+};
 
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPreInst, LPSTR lpCmdLine, int nCmdShow)
 {
-	WNDCLASSEX wc;
-	HWND hwnd;
-	MSG msg;
+	AppTest test;
+	AppConfig config;
 
-	ZeroMemory(&wc, sizeof(wc));
+	config.hinstance = hInst;
+	config.cmdShow = nCmdShow;
+	config.app = &test;
 
-	wc.cbSize = sizeof(WNDCLASSEX);
-	wc.lpfnWndProc = WndProc;
-	wc.hInstance = hInst;
-	wc.hIcon = LoadIcon(nullptr, IDI_APPLICATION);
-	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-	wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
-	wc.lpszClassName = winClass.c_str();
-	wc.hIconSm = LoadIcon(nullptr, IDI_APPLICATION);
+	app_init(&config);
 
-	if (!RegisterClassEx(&wc))
-	{
-		MessageBox(nullptr, "Window Registers Failed!", "Error!", MB_ICONEXCLAMATION | MB_OK);
-		return 0;
-	}
+	app_update();
 
-	hwnd = CreateWindowEx(
-		WS_EX_CLIENTEDGE,
-		winClass.c_str(),
-		caption.c_str(),
-		WIN_WS_TYPE,
-		CW_USEDEFAULT,
-		CW_USEDEFAULT,
-		width,
-		height,
-		nullptr,
-		nullptr,
-		hInst,
-		nullptr);
+	return app_release();
 
-	if (hwnd == nullptr)
-	{
-		MessageBox(nullptr, "Window Creation Failed!", "Error!", MB_ICONEXCLAMATION | MB_OK);
-		return 0;
-	}
-
-	ShowWindow(hwnd, nCmdShow);
-	UpdateWindow(hwnd);
-
-	game_init();
-
-	while (isRunning)
-	{
-		while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
-		{
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-		}
-
-		game_update();
-		game_render();
-	}
-
-	game_release();
-
-	return msg.wParam;
-}
-
-LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
-{
-	switch (msg)
-	{
-	case WM_CLOSE:
-		DestroyWindow(hwnd);
-		break;
-	case WM_DESTROY:
-		isRunning = false;
-		PostQuitMessage(0);
-		break;
-	default:
-		return DefWindowProc(hwnd, msg, wparam, lparam);
-	}
-	return 0;
-}
-
-void game_init()
-{
-	OutputDebugString("Init Function\n");
-}
-
-void game_update()
-{
-	OutputDebugString("Update Function\n");
-}
-
-void game_render()
-{
-	OutputDebugString("Render Function\n");
-}
-
-void game_release()
-{
-	OutputDebugString("Release Function\n");
 }
