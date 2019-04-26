@@ -1,8 +1,8 @@
 #include <iostream>
+#include <Windows.h>
 
-int main()
+int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPreInst, LPSTR lpCmdLine, int nCmdShow)
 {
-	std::cout << "Hello, World" << std::endl;
-	std::getchar();
+	MessageBox(nullptr, "Goodbye, cruel world!", "Note", MB_OK);
 	return 0;
 }
