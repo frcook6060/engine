@@ -9,8 +9,14 @@ static std::string winClass = "_engine_window";
 static std::string caption = "Engine Window";
 static int width = 1280;
 static int height = 720;
+static bool isRunning = true;
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
+
+void game_init();
+void game_update();
+void game_render();
+void game_release();
 
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPreInst, LPSTR lpCmdLine, int nCmdShow)
 {
@@ -58,14 +64,23 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPreInst, LPSTR lpCmdLine, int nCm
 	ShowWindow(hwnd, nCmdShow);
 	UpdateWindow(hwnd);
 
-	while (GetMessage(&msg, nullptr, 0, 0))
+	game_init();
+
+	while (isRunning)
 	{
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
+		while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
+		{
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
+
+		game_update();
+		game_render();
 	}
 
+	game_release();
+
 	return msg.wParam;
-	return 0;
 }
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
@@ -76,10 +91,31 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 		DestroyWindow(hwnd);
 		break;
 	case WM_DESTROY:
+		isRunning = false;
 		PostQuitMessage(0);
 		break;
 	default:
 		return DefWindowProc(hwnd, msg, wparam, lparam);
 	}
 	return 0;
+}
+
+void game_init()
+{
+	OutputDebugString("Init Function\n");
+}
+
+void game_update()
+{
+	OutputDebugString("Update Function\n");
+}
+
+void game_render()
+{
+	OutputDebugString("Render Function\n");
+}
+
+void game_release()
+{
+	OutputDebugString("Release Function\n");
 }
