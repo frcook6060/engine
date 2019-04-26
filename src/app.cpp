@@ -52,6 +52,8 @@ void app_init(AppConfig* config)
 	ShowWindow(g_config->hwnd, g_config->cmdShow);
 	UpdateWindow(g_config->hwnd);
 
+	input_init();
+
 	// Handle Timer
 	QueryPerformanceFrequency(&g_config->timer.clockFreq);
 
@@ -105,6 +107,8 @@ void app_update()
 		{
 			g_config->timer.fixedDelta = 0.0f;
 		}
+
+		input_update();
 	}
 }
 
@@ -133,6 +137,12 @@ static LRESULT CALLBACK _wndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
 	case WM_DESTROY:
 		app_quit();
 		PostQuitMessage(0);
+		break;
+	case WM_KEYDOWN:
+	case WM_SYSKEYDOWN:
+	case WM_KEYUP:
+	case WM_SYSKEYUP:
+		input_event(msg, wparam, lparam);
 		break;
 	default:
 		return DefWindowProc(hwnd, msg, wparam, lparam);
