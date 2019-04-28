@@ -4,6 +4,7 @@
 static AppConfig* g_config = nullptr;
 
 static LRESULT CALLBACK _wndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
+
 void app_init(AppConfig* config)
 {
 	g_config = config;
@@ -142,6 +143,13 @@ static LRESULT CALLBACK _wndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
 	case WM_SYSKEYDOWN:
 	case WM_KEYUP:
 	case WM_SYSKEYUP:
+	case WM_LBUTTONDOWN:
+	case WM_LBUTTONUP:
+	case WM_RBUTTONDOWN:
+	case WM_RBUTTONUP:
+	case WM_MBUTTONDOWN:
+	case WM_MBUTTONUP:
+	case WM_MOUSEMOVE:
 		input_event(msg, wparam, lparam);
 		break;
 	default:

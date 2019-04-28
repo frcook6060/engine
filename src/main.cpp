@@ -4,9 +4,14 @@
 class AppTest : public IApp
 {
 private:
+	int i = 0;
+
+	std::ofstream out;
+
 public:
 	virtual void init() 
 	{
+		out.open("debug.txt");
 	}
 
 	virtual void update()
@@ -23,6 +28,7 @@ public:
 
 	virtual void release()
 	{
+		out.close();
 	}
 };
 
