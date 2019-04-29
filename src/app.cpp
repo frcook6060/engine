@@ -27,6 +27,30 @@ void app_init(AppConfig* config)
 		return;
 	}
 
+	RECT rect;
+	rect.left = 0;
+	rect.top = 0;
+	rect.right = g_config->width;
+	rect.bottom = g_config->height;
+
+	AdjustWindowRectEx(
+		&rect,
+		WIN_WS_TYPE,
+		FALSE,
+		WS_EX_CLIENTEDGE);
+
+	std::stringstream ss;
+	ss << rect.left << ", " << rect.right << ", " << rect.top << ", " << rect.bottom << std::endl;
+
+	OutputDebugString(ss.str().c_str());
+
+	int windowWidth = rect.right - rect.left;
+	int windowHeight = rect.bottom - rect.top;
+
+	ss.str("");
+
+	ss << windowWidth << ", " << windowHeight << std::endl;
+	OutputDebugString(ss.str().c_str());
 
 	g_config->hwnd = CreateWindowEx(
 		WS_EX_CLIENTEDGE,
@@ -35,8 +59,8 @@ void app_init(AppConfig* config)
 		WIN_WS_TYPE,
 		CW_USEDEFAULT,
 		CW_USEDEFAULT,
-		g_config->width,
-		g_config->height,
+		windowWidth,
+		windowHeight,
 		nullptr,
 		nullptr,
 		g_config->hinstance,
@@ -119,6 +143,8 @@ WPARAM app_release()
 	{
 		g_config->app->release();
 	}
+
+	input_release();
 
 	return g_config->msg.wParam;
 }

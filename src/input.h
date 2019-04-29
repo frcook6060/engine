@@ -191,6 +191,8 @@ void input_event(UINT message, WPARAM wparam, LPARAM lparam);
 
 void input_update();
 
+void input_release();
+
 // keyboard
 bool input_isKeyRelease(Keyboard key);
 bool input_isKeyDown(Keyboard key);
@@ -204,3 +206,8 @@ bool input_isMousePress(MouseButton mb);
 bool input_isMouseUp(MouseButton mb);
 
 POINT input_getCursor();
+
+bool input_isGrab();
+void input_setGrab(bool grab);
+
+void input_toggle();

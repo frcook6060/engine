@@ -3,19 +3,32 @@
 
 class AppTest : public IApp
 {
-private:
-	int i = 0;
-
-	std::ofstream out;
-
 public:
 	virtual void init() 
 	{
-		out.open("debug.txt");
 	}
 
 	virtual void update()
 	{
+		if (input_isKeyDown(KB_ESCAPE))
+		{
+			app_quit();
+		}
+
+		if (input_isKeyDown(KB_TAB))
+		{
+			input_toggle();
+		}
+
+		if (input_isGrab())
+		{
+			std::stringstream ss;
+			POINT p = input_getCursor();
+
+			ss << p.x << ", " << p.y << std::endl;
+
+			OutputDebugString(ss.str().c_str());
+		}
 	}
 
 	virtual void fixedUpdate()
@@ -28,7 +41,6 @@ public:
 
 	virtual void release()
 	{
-		out.close();
 	}
 };
 
