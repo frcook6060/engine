@@ -18,10 +18,17 @@
 // Windows Libraries
 #include <Windows.h>
 
+// D3D11 Libraries
+#include <D3D11.h>
+#include <D3DX11.h>
+#include <d3dcompiler.h>
+
 // 3rd party libraries
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 
 
+// Engine API Libraries...
 #include "app.h"
 #include "input.h"
+#include "renderer.h"
