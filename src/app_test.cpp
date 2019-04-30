@@ -67,6 +67,9 @@ void AppTest::render()
 
 	rend_getContext()->IASetInputLayout(this->inputLayout);
 	rend_getContext()->IASetVertexBuffers(0, 1, &this->verticesBuffer, &stride, &offset);
+	stride = sizeof(glm::vec4);
+	rend_getContext()->IASetVertexBuffers(1, 1, &this->colorsBuffer, &stride, &offset);
+
 	rend_getContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	
 	rend_getContext()->Draw(vertices.size(), 0);
@@ -76,7 +79,8 @@ void AppTest::render()
 
 void AppTest::release()
 {
-	SAFE_RELEASE(this->constBuffer);
+	SAFE_RELEASE(constBuffer);
+	SAFE_RELEASE(colorsBuffer);
 	SAFE_RELEASE(verticesBuffer);
 	SAFE_RELEASE(inputLayout);
 	SAFE_RELEASE(pixelShader);
@@ -186,6 +190,15 @@ void AppTest::initInputLayout()
 			0,
 			D3D11_INPUT_PER_VERTEX_DATA,
 			0
+		},
+		{
+			"COLOR",
+			0,
+			DXGI_FORMAT_R32G32B32A32_FLOAT,
+			1,
+			0,
+			D3D11_INPUT_PER_VERTEX_DATA,
+			0
 		}
 	};
 
@@ -227,7 +240,23 @@ void AppTest::initVertexBuffer()
 	{
 		throw std::runtime_error("");
 	}
-}\
+
+	// Color
+	bufferDesc.ByteWidth = sizeof(glm::vec4) * colors.size();
+
+	data.pSysMem = colors.data();
+
+	r = rend_getDevice()->CreateBuffer(
+		&bufferDesc,
+		&data,
+		&this->colorsBuffer);
+
+	if (FAILED(r))
+	{
+		throw std::runtime_error("");
+	}
+
+}
 
 void AppTest::initConstBuffer()
 {
