@@ -99,6 +99,8 @@ public:
 		size_t size, 
 		D3D11_BIND_FLAG bindFlags = D3D11_BIND_VERTEX_BUFFER) = 0;
 
+	virtual void bind(int inputSlot, size_t stride, size_t offset = 0) = 0;
+
 	virtual void release() = 0;
 
 	virtual void addData(void* data, size_t size) = 0;
@@ -107,9 +109,83 @@ public:
 };
 
 // Static Buffer
+class BufferStatic : public Buffer
+{
+private:
+	ID3D11Buffer* buffer = nullptr;
+public:
+	virtual void init(
+		void* data,
+		size_t size,
+		D3D11_BIND_FLAG bindFlags = D3D11_BIND_VERTEX_BUFFER);
+
+	virtual void bind(int inputSlot, size_t stride, size_t offset = 0);
+
+	virtual void release();
+
+	virtual void addData(void* data, size_t size);
+
+	virtual ID3D11Buffer* getBuffer();
+};
 
 // Dynamic Buffer
+class BufferDynamic : public Buffer
+{
+private:
+	ID3D11Buffer* buffer = nullptr;
+public:
+	virtual void init(
+		void* data,
+		size_t size,
+		D3D11_BIND_FLAG bindFlags = D3D11_BIND_VERTEX_BUFFER);
+
+	virtual void bind(int inputSlot, size_t stride, size_t offset = 0);
+
+	virtual void release();
+
+	virtual void addData(void* data, size_t size);
+
+	virtual ID3D11Buffer* getBuffer();
+};
 
 // Vertex Buffers
+template<typename T>
+class VertexBufferStatic
+{
+private:
+	std::vector<T> list;
+	BufferStatic buffer;
+public:
+
+	void add(T t) 
+	{
+		list.push_back(t);
+	}
+
+	void clear()
+	{
+		list.clear();
+	}
+
+	void init()
+	{
+		buffer.init(list.data(), list.size() * sizeof(T));
+	}
+
+	void bind(int startSlot)
+	{
+	}
+
+	void release()
+	{
+		buffer.release();
+	}
+
+	ID3D11Buffer* getBuffer()
+	{
+		return buffer.getBuffer();
+	}
+
+};
 
 // Constant Buffer
