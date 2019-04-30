@@ -2,8 +2,38 @@
 
 void AppTest::init()
 {
-	this->initShaders();
-	this->initInputLayout();
+	vertexShader.init("data/shaders/main_vs.hlsl");
+	pixelShader.init("data/shaders/main_ps.hlsl");
+
+	/*
+	std::vector<D3D11_INPUT_ELEMENT_DESC> elements = {
+		{
+			"POSITION",
+			0,
+			DXGI_FORMAT_R32G32B32_FLOAT,
+			0,
+			0,
+			D3D11_INPUT_PER_VERTEX_DATA,
+			0
+		},
+		*/
+	inputLayout.add({ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 });
+		/*
+		{
+			"COLOR",
+			0,
+			DXGI_FORMAT_R32G32B32A32_FLOAT,
+			1,
+			0,
+			D3D11_INPUT_PER_VERTEX_DATA,
+			0
+		}
+	};
+	*/
+	inputLayout.add({ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 });
+	inputLayout.init(&this->vertexShader);
+
+	//this->initInputLayout();
 	this->initVertexBuffer();
 	this->initConstBuffer();
 
@@ -57,15 +87,17 @@ void AppTest::render()
 
 	rend_getContext()->RSSetViewports(1, &this->viewPort);
 
-	rend_getContext()->VSSetShader(this->vertexShader, nullptr, 0);
+	//rend_getContext()->VSSetShader(this->vertexShader, nullptr, 0);
+	vertexShader.bind();
 	rend_getContext()->VSSetConstantBuffers(0, 1, &this->constBuffer);
-	rend_getContext()->PSSetShader(this->pixelShader, nullptr, 0);
+	//rend_getContext()->PSSetShader(this->pixelShader, nullptr, 0);
+	pixelShader.bind();
 
 
 	uint32_t stride = sizeof(glm::vec3);
 	uint32_t offset = 0;
 
-	rend_getContext()->IASetInputLayout(this->inputLayout);
+	inputLayout.bind();
 	rend_getContext()->IASetVertexBuffers(0, 1, &this->verticesBuffer, &stride, &offset);
 	stride = sizeof(glm::vec4);
 	rend_getContext()->IASetVertexBuffers(1, 1, &this->colorsBuffer, &stride, &offset);
@@ -82,137 +114,11 @@ void AppTest::release()
 	SAFE_RELEASE(constBuffer);
 	SAFE_RELEASE(colorsBuffer);
 	SAFE_RELEASE(verticesBuffer);
-	SAFE_RELEASE(inputLayout);
-	SAFE_RELEASE(pixelShader);
-	SAFE_RELEASE(vertexShader);
-	SAFE_RELEASE(vertexBlob);
-}
+	//SAFE_RELEASE(inputLayout);
 
-void AppTest::initShaders()
-{
-	HRESULT r;
-	ID3D10Blob* error = nullptr;
-	ID3D10Blob* pixelBlob = nullptr;
-
-	r = D3DX11CompileFromFile(
-		"data/shaders/main_vs.hlsl",
-		nullptr,
-		nullptr,
-		"main",
-		"vs_5_0",
-		D3D10_SHADER_ENABLE_STRICTNESS,
-		0,
-		nullptr,
-		&vertexBlob,
-		&error,
-		nullptr);
-
-
-	if (FAILED(r))
-	{
-		if (error)
-		{
-			MessageBox(nullptr, (char*)error->GetBufferPointer(), "Error", MB_OK);
-		}
-		else
-		{
-			MessageBox(nullptr, "File doesn't exist", "Error", MB_OK);
-		}
-
-		throw std::runtime_error("");
-	}
-
-
-	r = rend_getDevice()->CreateVertexShader(
-		vertexBlob->GetBufferPointer(),
-		vertexBlob->GetBufferSize(),
-		nullptr,
-		&this->vertexShader);
-
-	if (FAILED(r))
-	{
-		throw std::runtime_error("Error: didn't create vertex shader");
-	}
-
-	r = D3DX11CompileFromFile(
-		"data/shaders/main_ps.hlsl",
-		nullptr,
-		nullptr,
-		"main",
-		"ps_5_0",
-		D3D10_SHADER_ENABLE_STRICTNESS,
-		0,
-		nullptr,
-		&pixelBlob,
-		&error,
-		nullptr
-	);
-
-	if (FAILED(r))
-	{
-		if (error)
-		{
-			MessageBox(nullptr, (char*)error->GetBufferPointer(), "Error", MB_OK);
-		}
-		else
-		{
-			MessageBox(nullptr, "File doesn't exist", "Error", MB_OK);
-		}
-
-		throw std::runtime_error("");
-	}
-
-	r = rend_getDevice()->CreatePixelShader(
-		pixelBlob->GetBufferPointer(),
-		pixelBlob->GetBufferSize(),
-		nullptr,
-		&this->pixelShader);
-
-	if (FAILED(r))
-	{
-		throw std::runtime_error("");
-	}
-
-	SAFE_RELEASE(error);
-	SAFE_RELEASE(pixelBlob);
-}
-
-void AppTest::initInputLayout()
-{
-	HRESULT r;
-
-	std::vector<D3D11_INPUT_ELEMENT_DESC> elements = {
-		{
-			"POSITION",
-			0,
-			DXGI_FORMAT_R32G32B32_FLOAT,
-			0,
-			0,
-			D3D11_INPUT_PER_VERTEX_DATA,
-			0
-		},
-		{
-			"COLOR",
-			0,
-			DXGI_FORMAT_R32G32B32A32_FLOAT,
-			1,
-			0,
-			D3D11_INPUT_PER_VERTEX_DATA,
-			0
-		}
-	};
-
-	r = rend_getDevice()->CreateInputLayout(
-		elements.data(),
-		elements.size(),
-		vertexBlob->GetBufferPointer(),
-		vertexBlob->GetBufferSize(),
-		&this->inputLayout);
-
-	if (FAILED(r))
-	{
-		throw std::runtime_error("");
-	}
+	inputLayout.release();
+	pixelShader.release();
+	vertexShader.release();
 }
 
 void AppTest::initVertexBuffer()

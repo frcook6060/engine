@@ -17,11 +17,15 @@ class AppTest : public IApp
 private:
 	// Draw a triangle for now...
 	// Shader
-	ID3D10Blob* vertexBlob;
-	ID3D11VertexShader* vertexShader;
-	ID3D11PixelShader* pixelShader;
+	// Vertex Shader
+	ShaderVertex vertexShader;
+	// Pixel Shader
+	ShaderPixel pixelShader;
+
 	// Input Layout
-	ID3D11InputLayout* inputLayout = nullptr;
+	//ID3D11InputLayout* inputLayout = nullptr;
+	InputLayout inputLayout;
+
 	// Buffers
 	// Vertices
 	std::vector<glm::vec3> vertices = {
@@ -49,8 +53,6 @@ private:
 
 	float yrot = 0.0f;
 
-	void initShaders();
-	void initInputLayout();
 	void initVertexBuffer();
 	void initConstBuffer();
 
