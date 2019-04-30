@@ -79,6 +79,8 @@ void app_init(AppConfig* config)
 
 	input_init();
 
+	rend_init();
+
 	// Handle Timer
 	QueryPerformanceFrequency(&g_config->timer.clockFreq);
 
@@ -143,6 +145,8 @@ WPARAM app_release()
 	{
 		g_config->app->release();
 	}
+
+	rend_release();
 
 	input_release();
 

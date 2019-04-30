@@ -3,6 +3,8 @@
 
 class AppTest : public IApp
 {
+private:
+
 public:
 	virtual void init() 
 	{
@@ -10,25 +12,6 @@ public:
 
 	virtual void update()
 	{
-		if (input_isKeyDown(KB_ESCAPE))
-		{
-			app_quit();
-		}
-
-		if (input_isKeyDown(KB_TAB))
-		{
-			input_toggle();
-		}
-
-		if (input_isGrab())
-		{
-			std::stringstream ss;
-			POINT p = input_getCursor();
-
-			ss << p.x << ", " << p.y << std::endl;
-
-			OutputDebugString(ss.str().c_str());
-		}
 	}
 
 	virtual void fixedUpdate()
@@ -37,6 +20,10 @@ public:
 
 	virtual void render()
 	{
+		rend_clear(glm::vec4(0.0f, 0.0f, 1.0f, 1.0f), 1.0f);
+		// Render something here...
+
+		rend_present();
 	}
 
 	virtual void release()
