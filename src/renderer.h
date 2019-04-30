@@ -1,6 +1,9 @@
 #pragma once
 
 
+
+#define SAFE_RELEASE(d) if(d) { d->Release(); } 
+
 void rend_init();
 
 void rend_release();

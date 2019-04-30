@@ -14,6 +14,8 @@ static ID3D11Texture2D* depthBufferTexture = nullptr;
 static ID3D11DepthStencilState* depthBufferState = nullptr;
 // Depth Stencil View
 static ID3D11DepthStencilView* depthBufferView = nullptr;
+// Raster State
+static ID3D11RasterizerState* rasterState = nullptr;
 
 void rend_init()
 {
@@ -143,40 +145,44 @@ void rend_init()
 		std::runtime_error("Error Failed to create depth view...");
 	}
 
+
+	D3D11_RASTERIZER_DESC rastDesc = {};
+	rastDesc.AntialiasedLineEnable = false;
+	rastDesc.CullMode = D3D11_CULL_NONE;
+	rastDesc.DepthBias = 0;
+	rastDesc.SlopeScaledDepthBias = 0.0f;
+	rastDesc.DepthClipEnable = true;
+	rastDesc.FillMode = D3D11_FILL_SOLID;
+	rastDesc.FrontCounterClockwise = false;
+	rastDesc.MultisampleEnable = false;
+	rastDesc.ScissorEnable = false;
+	rastDesc.SlopeScaledDepthBias = 0.0f;
+
+	r = rend_getDevice()->CreateRasterizerState(
+		&rastDesc,
+		&rasterState
+	);
+
+	if (FAILED(r))
+	{
+		std::runtime_error("Error: raster state wasn't created...");
+	}
 	context->OMSetDepthStencilState(depthBufferState, 1);
 	context->OMSetRenderTargets(1, &renderTargetView, depthBufferView);
+	context->RSSetState(rasterState);
+
 }
 
 void rend_release()
 {
-	if (depthBufferView)
-	{
-		depthBufferView->Release();
-	}
-	if (depthBufferState)
-	{
-		depthBufferState->Release();
-	}
-	if (depthBufferTexture)
-	{
-		depthBufferTexture->Release();
-	}
-	if (renderTargetView)
-	{
-		renderTargetView->Release();
-	}
-	if (context)
-	{
-		context->Release();
-	}
-	if (device)
-	{
-		device->Release();
-	}
-	if (swapChain)
-	{
-		swapChain->Release();
-	}
+	SAFE_RELEASE(rasterState);
+	SAFE_RELEASE(depthBufferView);
+	SAFE_RELEASE(depthBufferState);
+	SAFE_RELEASE(depthBufferTexture);
+	SAFE_RELEASE(renderTargetView);
+	SAFE_RELEASE(context);
+	SAFE_RELEASE(device);
+	SAFE_RELEASE(swapChain);
 }
 
 IDXGISwapChain* rend_getSwapChain()

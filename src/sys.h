@@ -22,7 +22,9 @@
 #include <D3D11.h>
 #include <D3DX11.h>
 #include <d3dcompiler.h>
-
+// D3D10 Libraries
+#include <D3D10.h>
+#include <D3DX10.h>
 // 3rd party libraries
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
