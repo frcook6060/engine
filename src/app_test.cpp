@@ -95,7 +95,6 @@ void AppTest::render()
 
 	indices.bind();
 	rend_getContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	//rend_getContext()->Draw(vertices.count(), 0);
 	rend_getContext()->DrawIndexed(indices.count(), 0, 0);
 
 	rend_present();
