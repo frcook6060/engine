@@ -1,0 +1,1 @@
+FreeImage licenses. FreeImage is under a dual licenses.
