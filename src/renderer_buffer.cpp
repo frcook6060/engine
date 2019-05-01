@@ -42,6 +42,7 @@ void BufferStatic::bind(int inputSlot, size_t stride, size_t offset)
 		rend_getContext()->IASetVertexBuffers(inputSlot, 1, &this->buffer, &stride, &offset);
 		break;
 	case D3D11_BIND_INDEX_BUFFER:
+		rend_getContext()->IASetIndexBuffer(this->buffer, DXGI_FORMAT_R32_UINT, offset);
 		break;
 	default:
 		break;
@@ -100,6 +101,7 @@ void BufferDynamic::bind(int inputSlot, size_t stride, size_t offset)
 		rend_getContext()->IASetVertexBuffers(inputSlot, 1, &this->buffer, &stride, &offset);
 		break;
 	case D3D11_BIND_INDEX_BUFFER:
+		rend_getContext()->IASetIndexBuffer(this->buffer, DXGI_FORMAT_R32_UINT, offset);
 		break;
 	default:
 		break;

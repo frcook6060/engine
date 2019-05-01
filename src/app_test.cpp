@@ -11,15 +11,32 @@ void AppTest::init()
 	inputLayout.init(&this->vertexShader);
 
 	// Vertex
-	vertices.add(glm::vec3(0.0f, 1.0f, 0.0f));
-	vertices.add(glm::vec3(-1.0f, -1.0f, 0.0f));
-	vertices.add(glm::vec3(1.0f, -1.0f, 0.0f));
+	std::vector<glm::vec3> v = {
+		glm::vec3(-1.0f, 1.0f, 0.0f),
+		glm::vec3(1.0f, 1.0f, 0.0f),
+		glm::vec3(-1.0f, -1.0f, 0.0f),
+		glm::vec3(1.0f, -1.0f, 0.0f)
+	};
+	vertices.addAll(v);
 	vertices.init();
+
 	// Colors
-	colors.add(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
-	colors.add(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
-	colors.add(glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
+	std::vector<glm::vec4> c = {
+		glm::vec4(1.0f, 0.0f, 0.0f, 1.0f),
+		glm::vec4(0.0f, 1.0f, 0.0f, 1.0f),
+		glm::vec4(0.0f, 0.0f, 1.0f, 1.0f),
+		glm::vec4(1.0f, 1.0f, 0.0f, 1.0f)
+	};
+	colors.addAll(c);
 	colors.init();
+
+	// Index
+	std::vector<uint32_t> i = {
+		0, 1, 2,
+		2, 1, 3
+	};
+	indices.addAll(i);
+	indices.init();
 
 	constVS.init();
 
@@ -76,9 +93,10 @@ void AppTest::render()
 	vertices.bind(0);
 	colors.bind(1);
 
+	indices.bind();
 	rend_getContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	
-	rend_getContext()->Draw(vertices.count(), 0);
+	//rend_getContext()->Draw(vertices.count(), 0);
+	rend_getContext()->DrawIndexed(indices.count(), 0, 0);
 
 	rend_present();
 }
@@ -86,6 +104,7 @@ void AppTest::render()
 void AppTest::release()
 {
 	constVS.release();
+	indices.release();
 	colors.release();
 	vertices.release();
 	inputLayout.release();

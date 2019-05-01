@@ -32,6 +32,9 @@ private:
 	// Color
 	VertexBufferStatic<glm::vec4> colors;
 	
+	// Index Buffer
+	IndexBufferStatic indices;
+
 	// Const Buffer VS
 	ConstantBuffer<ConstVS> constVS;
 

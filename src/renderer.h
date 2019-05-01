@@ -1,7 +1,5 @@
 #pragma once
 
-
-
 #define SAFE_RELEASE(d) if(d) { d->Release(); } 
 
 void rend_init();
@@ -169,6 +167,13 @@ public:
 		list.push_back(t);
 	}
 
+	void addAll(std::vector<T>& list)
+	{
+		std::for_each(list.begin(), list.end(), [&](T& t) {
+			this->list.push_back(t);
+		});
+	}
+
 	void clear()
 	{
 		list.clear();
@@ -176,7 +181,7 @@ public:
 
 	void init()
 	{
-		buffer.init(list.data(), list.size() * sizeof(T));
+		buffer.init(list.data(), size());
 	}
 
 	void bind(int startSlot)
@@ -224,6 +229,13 @@ public:
 		list.push_back(t);
 	}
 
+	void addAll(std::vector<T>& list)
+	{
+		std::for_each(list.begin(), list.end(), [&](T& t) {
+			this->list.push_back(t);
+		});
+	}
+
 	void clear()
 	{
 		list.clear();
@@ -231,12 +243,12 @@ public:
 
 	void init()
 	{
-		buffer.init(nullptr, list.size() * sizeof(T));
+		buffer.init(nullptr, size());
 	}
 
 	void update()
 	{
-		buffer.addData(list.data(), list.size() * sizeof(T));
+		buffer.addData(list.data(), size());
 	}
 
 	void bind(int startSlot)
@@ -274,10 +286,131 @@ public:
 // Index Buffer
 
 // Static Index Buffer
+class IndexBufferStatic
+{
+private:
+	std::vector<uint32_t> list;
+	BufferStatic buffers;
+public:
 
+	void add(uint32_t index)
+	{
+		list.push_back(index);
+	}
+
+	void addAll(std::vector<uint32_t>& list)
+	{
+		std::for_each(list.begin(), list.end(), [&](uint32_t t) {
+			this->list.push_back(t);
+		});
+	}
+
+	void clear()
+	{
+		list.clear();
+	}
+
+	void init()
+	{
+		buffers.init(list.data(), size(), D3D11_BIND_INDEX_BUFFER);
+	}
+
+	void bind()
+	{
+		buffers.bind(0, 0);
+	}
+
+	void release()
+	{
+		buffers.release();
+	}
+
+	ID3D11Buffer* getBuffer()
+	{
+		return this->buffers.getBuffer();
+	}
+
+	size_t typeSize()
+	{
+		return sizeof(uint32_t);
+	}
+
+	size_t count()
+	{
+		return list.size();
+	}
+
+	size_t size()
+	{
+		return typeSize() * count();
+	}
+
+};
 
 // Dynamic Index Buffer
+class IndexBufferDynamic
+{
+private:
+	std::vector<uint32_t> list;
+	BufferDynamic buffers;
+public:
+	void add(uint32_t t)
+	{
+		list.push_back(t);
+	}
 
+	void addAll(const std::vector<uint32_t>& list)
+	{
+		std::for_each(list.begin(), list.end(), [&](uint32_t t) {
+			this->list.push_back(t);
+		});
+	}
+
+	void clear()
+	{
+		list.clear();
+	}
+
+	void init()
+	{
+		buffers.init(nullptr, size(), D3D11_BIND_INDEX_BUFFER);
+	}
+
+	void update()
+	{
+		buffers.addData(list.data(), size());
+	}
+
+	void bind(int startSlot)
+	{
+		buffers.bind(startSlot, sizeof(uint32_t));
+	}
+
+	void release()
+	{
+		buffers.release();
+	}
+
+	ID3D11Buffer* getBuffer()
+	{
+		return buffers.getBuffer();
+	}
+
+	size_t typeSize()
+	{
+		return sizeof(uint32_t);
+	}
+
+	size_t count()
+	{
+		return list.size();
+	}
+
+	size_t size()
+	{
+		return typeSize() * count();
+	}
+};
 
 // Constant Buffer
 template<typename T>
