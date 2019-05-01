@@ -28,9 +28,10 @@
 // 3rd party libraries
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
-
+#include <FreeImage.h>
 
 // Engine API Libraries...
 #include "app.h"
 #include "input.h"
+#include "image_loader.h"
 #include "renderer.h"
