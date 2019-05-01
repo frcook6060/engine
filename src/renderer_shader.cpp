@@ -57,6 +57,11 @@ void ShaderVertex::release()
 	SAFE_RELEASE(blob);
 }
 
+void ShaderVertex::setConstBuffer(int startSlot, ID3D11Buffer* buffer)
+{
+	rend_getContext()->VSSetConstantBuffers(startSlot, 1, &buffer);
+}
+
 // Pixel Shader
 void ShaderPixel::init(std::string path)
 {
@@ -112,3 +117,10 @@ void ShaderPixel::release()
 	SAFE_RELEASE(shader);
 	SAFE_RELEASE(blob);
 }
+
+void ShaderPixel::setConstBuffer(int startSlot, ID3D11Buffer* buffer)
+{
+	rend_getContext()->PSGetConstantBuffers(startSlot, 1, &buffer);
+}
+
+

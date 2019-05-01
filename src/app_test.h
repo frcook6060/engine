@@ -23,38 +23,22 @@ private:
 	ShaderPixel pixelShader;
 
 	// Input Layout
-	//ID3D11InputLayout* inputLayout = nullptr;
 	InputLayout inputLayout;
 
 	// Buffers
 	// Vertices
-	std::vector<glm::vec3> vertices = {
-		glm::vec3(0.0f, 1.0f, 0.0f),
-		glm::vec3(-1.0f, -1.0f, 0.0f),
-		glm::vec3(1.0f, -1.0f, 0.0f)
-	};
-
-	// Vertices Buffer
-	ID3D11Buffer* verticesBuffer;
+	VertexBufferStatic<glm::vec3> vertices;
 
 	// Color
-	std::vector<glm::vec4> colors = {
-		glm::vec4(1.0f, 0.0f, 0.0f, 1.0f),
-		glm::vec4(0.0f, 1.0f, 0.0f, 1.0f),
-		glm::vec4(0.0f, 0.0f, 1.0f, 1.0f)
-	};
-
-	ID3D11Buffer* colorsBuffer;
-
+	VertexBufferStatic<glm::vec4> colors;
+	
 	// Const Buffer VS
-	ID3D11Buffer* constBuffer;
+	ConstantBuffer<ConstVS> constVS;
+
 
 	D3D11_VIEWPORT viewPort;
 
 	float yrot = 0.0f;
-
-	void initVertexBuffer();
-	void initConstBuffer();
 
 public:
 	virtual void init();

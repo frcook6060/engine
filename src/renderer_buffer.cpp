@@ -8,6 +8,8 @@ void BufferStatic::init(
 {
 	HRESULT r;
 
+	this->bindFlags = bindFlags;
+
 	D3D11_BUFFER_DESC desc = {};
 	desc.Usage = D3D11_USAGE_DEFAULT;
 	desc.ByteWidth = size;
@@ -34,7 +36,16 @@ void BufferStatic::init(
 
 void BufferStatic::bind(int inputSlot, size_t stride, size_t offset)
 {
-
+	switch (this->bindFlags)
+	{
+	case D3D11_BIND_VERTEX_BUFFER:
+		rend_getContext()->IASetVertexBuffers(inputSlot, 1, &this->buffer, &stride, &offset);
+		break;
+	case D3D11_BIND_INDEX_BUFFER:
+		break;
+	default:
+		break;
+	}
 }
 
 void BufferStatic::release()
@@ -59,8 +70,10 @@ void BufferDynamic::init(
 {
 	HRESULT r;
 
+	this->bindFlags = bindFlags;
+
 	D3D11_BUFFER_DESC desc = {};
-	desc.Usage = D3D11_USAGE_DEFAULT;
+	desc.Usage = D3D11_USAGE_DYNAMIC;
 	desc.ByteWidth = size;
 	desc.BindFlags = bindFlags;
 	desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
@@ -81,7 +94,16 @@ void BufferDynamic::init(
 
 void BufferDynamic::bind(int inputSlot, size_t stride, size_t offset)
 {
-
+	switch (this->bindFlags)
+	{
+	case D3D11_BIND_VERTEX_BUFFER:
+		rend_getContext()->IASetVertexBuffers(inputSlot, 1, &this->buffer, &stride, &offset);
+		break;
+	case D3D11_BIND_INDEX_BUFFER:
+		break;
+	default:
+		break;
+	}
 }
 
 void BufferDynamic::release()

@@ -34,6 +34,8 @@ public:
 	virtual void release() = 0;
 
 	ID3D10Blob* getBlob() { return this->blob;  }
+
+	virtual void setConstBuffer(int startSlot, ID3D11Buffer* buffer) = 0;
 };
 
 template<typename T>
@@ -54,6 +56,8 @@ public:
 	virtual void bind();
 
 	virtual void release();
+
+	virtual void setConstBuffer(int startSlot, ID3D11Buffer* buffer);
 };
 
 class ShaderPixel : public ShaderBase<ID3D11PixelShader>
@@ -64,6 +68,8 @@ public:
 	virtual void bind();
 
 	virtual void release();
+
+	virtual void setConstBuffer(int startSlot, ID3D11Buffer* buffer);
 };
 
 // Input Layout
@@ -83,17 +89,12 @@ public:
 	void bind();
 
 	void release();
-
-	
 };
 
 // Buffers
 class Buffer
 {
 public:
-	virtual void init(
-		D3D11_BIND_FLAG bindFlags = D3D11_BIND_VERTEX_BUFFER) = 0;
-
 	virtual void init(
 		void* data, 
 		size_t size, 
@@ -113,6 +114,8 @@ class BufferStatic : public Buffer
 {
 private:
 	ID3D11Buffer* buffer = nullptr;
+	D3D11_BIND_FLAG bindFlags;
+
 public:
 	virtual void init(
 		void* data,
@@ -133,6 +136,8 @@ class BufferDynamic : public Buffer
 {
 private:
 	ID3D11Buffer* buffer = nullptr;
+	D3D11_BIND_FLAG bindFlags;
+
 public:
 	virtual void init(
 		void* data,
@@ -149,6 +154,8 @@ public:
 };
 
 // Vertex Buffers
+
+// Static Vertex Buffers
 template<typename T>
 class VertexBufferStatic
 {
@@ -174,6 +181,7 @@ public:
 
 	void bind(int startSlot)
 	{
+		buffer.bind(startSlot, sizeof(T));
 	}
 
 	void release()
@@ -186,6 +194,127 @@ public:
 		return buffer.getBuffer();
 	}
 
+	size_t typeSize()
+	{
+		return sizeof(T);
+	}
+
+	size_t count()
+	{
+		return list.size();
+	}
+
+	size_t size()
+	{
+		return typeSize() * count();
+	}
 };
 
+// Dynamic Vertex Buffer
+template<typename T>
+class VertexBufferDynamic
+{
+private:
+	std::vector<T> list;
+	BufferDynamic buffer;
+public:
+
+	void add(T t)
+	{
+		list.push_back(t);
+	}
+
+	void clear()
+	{
+		list.clear();
+	}
+
+	void init()
+	{
+		buffer.init(nullptr, list.size() * sizeof(T));
+	}
+
+	void update()
+	{
+		buffer.addData(list.data(), list.size() * sizeof(T));
+	}
+
+	void bind(int startSlot)
+	{
+		buffer.bind(startSlot, sizeof(T));
+	}
+
+	void release()
+	{
+		buffer.release();
+	}
+
+	ID3D11Buffer* getBuffer()
+	{
+		return buffer.getBuffer();
+	}
+
+	size_t typeSize()
+	{
+		return sizeof(T);
+	}
+
+	size_t count()
+	{
+		return list.size();
+	}
+
+	size_t size()
+	{
+		return typeSize() * count();
+	}
+
+};
+
+// Index Buffer
+
+// Static Index Buffer
+
+
+// Dynamic Index Buffer
+
+
 // Constant Buffer
+template<typename T>
+class ConstantBuffer
+{
+private:
+	T value;
+	BufferDynamic buffer;
+public:
+
+	T* get()
+	{
+		return &value;
+	}
+
+	ID3D11Buffer* getBuffer()
+	{
+		return buffer.getBuffer();
+	}
+
+	void init()
+	{
+		buffer.init(nullptr, this->typeSize(), D3D11_BIND_CONSTANT_BUFFER);
+	}
+
+	void update()
+	{
+		buffer.addData(&this->value, this->typeSize());
+	}
+
+	void release()
+	{
+		buffer.release();
+	}
+
+	size_t typeSize()
+	{
+		return sizeof(T);
+	}
+};
