@@ -29,6 +29,10 @@
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 #include <FreeImage.h>
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+#include <json/json.h>
 
 // Engine API Libraries...
 #include "app.h"
