@@ -5,9 +5,12 @@ void AppTest::init()
 	vertexShader.init("data/shaders/main_vs.hlsl");
 	pixelShader.init("data/shaders/main_ps.hlsl");
 
-	inputLayout.add({ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 });
-
-	inputLayout.add({ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 });
+	std::vector<D3D11_INPUT_ELEMENT_DESC> elements = {
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 2, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+	};
+	inputLayout.addAll(elements);
 	inputLayout.init(&this->vertexShader);
 
 	// Vertex
@@ -30,6 +33,16 @@ void AppTest::init()
 	colors.addAll(c);
 	colors.init();
 
+	// TexCoords
+	std::vector<glm::vec2> tc = {
+		glm::vec2(0.0f, 0.0f),
+		glm::vec2(1.0f, 0.0f),
+		glm::vec2(0.0f, 1.0f),
+		glm::vec2(1.0f, 1.0f)
+	};
+	texCoords.addAll(tc);
+	texCoords.init();
+
 	// Index
 	std::vector<uint32_t> i = {
 		0, 1, 2,
@@ -39,6 +52,8 @@ void AppTest::init()
 	indices.init();
 
 	constVS.init();
+
+	tex0.init("data/textures/angry.png");
 
 	viewPort = {};
 	viewPort.TopLeftX = 0.0f;
@@ -89,9 +104,12 @@ void AppTest::render()
 
 	pixelShader.bind();
 
+	tex0.bind(0);
+
 	inputLayout.bind();
 	vertices.bind(0);
 	colors.bind(1);
+	texCoords.bind(2);
 
 	indices.bind();
 	rend_getContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -102,8 +120,10 @@ void AppTest::render()
 
 void AppTest::release()
 {
+	tex0.release();
 	constVS.release();
 	indices.release();
+	texCoords.release();
 	colors.release();
 	vertices.release();
 	inputLayout.release();

@@ -79,6 +79,7 @@ private:
 public:
 
 	void add(D3D11_INPUT_ELEMENT_DESC desc);
+	void addAll(std::vector<D3D11_INPUT_ELEMENT_DESC>& descs);
 
 	void clear();
 
@@ -450,4 +451,26 @@ public:
 	{
 		return sizeof(T);
 	}
+};
+
+
+class Texture2D
+{
+private:
+	Image image;
+	ID3D11Texture2D* tex = nullptr;
+	ID3D11ShaderResourceView* shaderResourceView = nullptr;
+	ID3D11SamplerState* samplerState = nullptr;
+public:
+
+	void init(std::string path);
+
+	void bind(int inputSlot);
+
+	void release();
+
+	uint32_t getWidth();
+
+	uint32_t getHeight();
+
 };

@@ -5,6 +5,13 @@ void InputLayout::add(D3D11_INPUT_ELEMENT_DESC desc)
 	this->elements.push_back(desc);
 }
 
+void InputLayout::addAll(std::vector<D3D11_INPUT_ELEMENT_DESC>& descs)
+{
+	std::for_each(descs.begin(), descs.end(), [&](D3D11_INPUT_ELEMENT_DESC& desc) {
+		this->elements.push_back(desc);
+	});
+}
+
 void InputLayout::clear()
 {
 	elements.clear();

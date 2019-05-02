@@ -32,12 +32,17 @@ private:
 	// Color
 	VertexBufferStatic<glm::vec4> colors;
 	
+	// TexCoords
+	VertexBufferStatic<glm::vec2> texCoords;
+
 	// Index Buffer
 	IndexBufferStatic indices;
 
 	// Const Buffer VS
 	ConstantBuffer<ConstVS> constVS;
 
+	// Texture2D
+	Texture2D tex0;
 
 	D3D11_VIEWPORT viewPort;
 
